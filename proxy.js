@@ -47,6 +47,6 @@ app.post('/photo', multer.array('image[]'), (req, res) => {
 
 })
 
-const server = app.listen(3000, function () {
-    console.log('Server listening on port 3000');
+const server = app.listen(80, function () {
+    console.log('Server listening on port 80');
 });
