@@ -12,10 +12,6 @@ app.use(bodyParser.json());
 //allow OPTIONS on all resources
 app.options('*', cors())
 app.post('/photo', multer.array('image[]'), (req, res) => {
-    // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment
-    res.header("access-control-allow-origin", "*");
-    res.header("access-control-allow-methods", "GET, PUT, PATCH, POST, DELETE");
-
     const fileRecievedFromClient = req.files[0]; //File Object sent in 'fileFieldName' field in multipart/form-data
     const form = new FormData();
     form.append('image[]', fileRecievedFromClient.buffer, fileRecievedFromClient.originalname);
@@ -31,9 +27,6 @@ app.post('/photo', multer.array('image[]'), (req, res) => {
     };
 
     const proxyReq = request(options, (error, response, body) => {
-        response.header("access-control-allow-origin", "*");
-        response.header("access-control-allow-methods", "GET, PUT, PATCH, POST, DELETE");
-
         if (error) {
             console.error('error: ' + error);
         }
@@ -41,7 +34,13 @@ app.post('/photo', multer.array('image[]'), (req, res) => {
 
     form.pipe(proxyReq);
 
-    proxyReq.pipe(res);
+    proxyReq.on('response', (res) => {
+        res.headers = {
+            ...res.headers,
+            "access-control-allow-origin": "*",
+            "access-control-allow-methods": "GET, PUT, PATCH, POST, DELETE",
+        }
+    }).pipe(res);
 
 })
 
