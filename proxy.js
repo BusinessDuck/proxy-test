@@ -27,6 +27,13 @@ app.post('/photo', multer.array('image[]'), (req, res) => {
     };
 
     const proxyReq = request(options, (error, response, body) => {
+
+        // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment
+        res.header("access-control-allow-origin", "*");
+        response.header("access-control-allow-origin", "*");
+        res.header("access-control-allow-methods", "GET, PUT, PATCH, POST, DELETE");
+        response.header("access-control-allow-methods", "GET, PUT, PATCH, POST, DELETE");
+
         if (error) {
             console.error('error: ' + error);
         }
